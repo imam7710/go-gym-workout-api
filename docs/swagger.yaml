@@ -1,0 +1,262 @@
+basePath: /api
+definitions:
+  domain.ExerciseLogRequest:
+    properties:
+      exercise_id:
+        type: integer
+      rep_count:
+        minimum: 1
+        type: integer
+      set_count:
+        minimum: 1
+        type: integer
+      weight:
+        minimum: 0
+        type: integer
+    required:
+    - exercise_id
+    - rep_count
+    - set_count
+    - weight
+    type: object
+  domain.ExerciseRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      workout_id:
+        type: integer
+    required:
+    - description
+    - name
+    - workout_id
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API Backend untuk aplikasi Gym berbasis Clean Architecture menggunakan
+    Go, Echo, dan GORM.
+  title: Gym App API
+  version: "1.0"
+paths:
+  /exercises:
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan latihan baru pada workout (hanya jika workout milik
+        user yang login)
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Data Exercise
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ExerciseRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Tambah Exercise baru
+      tags:
+      - Exercises
+  /exercises/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Menghapus data exercise berdasarkan ID (hanya jika workout milik
+        user yang login)
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ID Exercise
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Hapus Exercise
+      tags:
+      - Exercises
+  /exercises/workout/{workout_id}:
+    get:
+      consumes:
+      - application/json
+      description: Melihat daftar exercise berdasarkan ID workout
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ID Workout
+        in: path
+        name: workout_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lihat Daftar Exercise
+      tags:
+      - Exercises
+  /logs:
+    post:
+      consumes:
+      - application/json
+      description: Mencatat repetisi dan beban untuk exercise tertentu
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Data Log
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ExerciseLogRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Catat Log Latihan (Reps & Weight)
+      tags:
+      - Logs
+  /logs/exercise/{exercise_id}:
+    get:
+      consumes:
+      - application/json
+      description: Melihat riwayat repetisi dan beban pada exercise tertentu
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ID Exercise
+        in: path
+        name: exercise_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lihat Histori Log
+      tags:
+      - Logs
+swagger: "2.0"
